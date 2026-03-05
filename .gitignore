@@ -1,0 +1,55 @@
+# =========================
+# Entornos Virtuales
+# =========================
+.venv/
+venv/
+env/
+ENV/
+*.pyc
+__pycache__/
+
+# =========================
+# Variables de Entorno y Credenciales
+# =========================
+.env
+*.pem
+*.key
+credentials.json
+client_secret.json
+
+# =========================
+# Datos Temporales y Documentos (¡Crítico!)
+# =========================
+# Ignoramos toda la carpeta data excepto un posible archivo de instrucciones (opcional)
+data/
+!data/.gitkeep
+
+# Ignoramos cualquier archivo de reporte suelto en la raíz por accidente
+*.pdf
+*.csv
+*.xlsx
+*.xls
+*.json
+*.txt
+
+# =========================
+# Logs del Sistema y Orquestador
+# =========================
+logs/
+*.log
+airflow-webserver.pid
+
+# =========================
+# Configuración de IDEs y OS
+# =========================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# =========================
+# Caché de Pruebas
+# =========================
+.pytest_cache/
+htmlcov/
+.coverage

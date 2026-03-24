@@ -5,11 +5,11 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from dotenv import load_dotenv
 
-# 🟢 Cargar variables de entorno
+# Cargar variables de entorno
 load_dotenv()
 
 # ==========================================
-# 🛡️ Step 1: Output Validation Schema (Pydantic)
+# Step 1: Output Validation Schema (Pydantic)
 # ==========================================
 class ExtractedTitles(BaseModel):
     table_titles: list[str] = Field(
@@ -22,13 +22,13 @@ class ExtractedTitles(BaseModel):
     )
 
 # ==========================================
-# 🧠 Step 2: Configure the New AI Client
+# Step 2: Configure the New AI Client
 # ==========================================
 # El nuevo cliente toma automáticamente la llave si la pasamos así
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 # ==========================================
-# 🗣️ Step 3: The Cognitive Prompt
+# Step 3: The Cognitive Prompt
 # ==========================================
 COGNITIVE_PROMPT = """
 You are an expert Document Analysis Agent specializing in insurance and financial reports.
@@ -47,7 +47,7 @@ Locate all visible structural tables containing rows and columns of *numerical* 
 """
 
 # ==========================================
-# 🚀 Step 4: The Execution Function
+# Step 4: The Execution Function
 # ==========================================
 def extract_report_titles_cognitively(file_path: str) -> ExtractedTitles:
     if not os.path.exists(file_path):
@@ -81,7 +81,7 @@ def extract_report_titles_cognitively(file_path: str) -> ExtractedTitles:
         return ExtractedTitles(table_titles=[], analysis_justification=f"General error: {str(e)}")
 
 # ==========================================
-# 🧪 Bloque de prueba local
+# Bloque de prueba local
 # ==========================================
 if __name__ == "__main__":
     screenshots = [
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         print(f"\nProcesando: {shot}...")
         if os.path.exists(shot):
             result = extract_report_titles_cognitively(shot)
-            print(f"✅ Títulos encontrados: {result.table_titles}")
-            print(f"🧠 Razonamiento: {result.analysis_justification}")
+            print(f"Títulos encontrados: {result.table_titles}")
+            print(f"Razonamiento: {result.analysis_justification}")
         else:
-            print(f"❌ Error: No se encontró la imagen en {shot}")
+            print(f"Error: No se encontró la imagen en {shot}")

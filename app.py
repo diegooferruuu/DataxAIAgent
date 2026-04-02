@@ -215,13 +215,8 @@ else:
 # Sidebar Information
 # ==========================================
 with st.sidebar:
-    st.header("ℹ️ About DATAX")
-    st.write("""
-    **DATAX** is an intelligent document analysis system that:
-    - Extracts comprehensive metadata
-    - Identifies numerical tables
-    - Provides structured analysis
-    """)
+    st.header("ℹ️ Agente de IA para la Automatización de Ingesta de Datos")
+    
     
     st.markdown("---")
     st.subheader("📖 Supported Formats")

@@ -4,13 +4,11 @@ import json
 from pathlib import Path
 from datetime import datetime
 import tempfile
-from dotenv import load_dotenv
 
 # Import local modules
 from src.ingestion.metadata_reader import extract_metadata
 from src.extraction.cognitive_titles import extract_report_titles_cognitively
 
-load_dotenv()
 
 # ==========================================
 # Page Configuration

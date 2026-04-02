@@ -30,7 +30,6 @@ data/
 *.xlsx
 *.xls
 *.json
-*.txt
 
 # =========================
 # Logs del Sistema y Orquestador

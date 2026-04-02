@@ -5,7 +5,6 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from dotenv import load_dotenv
 
-# Cargar variables de entorno
 load_dotenv()
 
 # ==========================================
@@ -24,8 +23,8 @@ class ExtractedTitles(BaseModel):
 # ==========================================
 # Step 2: Configure the New AI Client
 # ==========================================
-# El nuevo cliente toma automáticamente la llave si la pasamos así
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+# client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # ==========================================
 # Step 3: The Cognitive Prompt
@@ -55,13 +54,29 @@ def extract_report_titles_cognitively(file_path: str) -> ExtractedTitles:
 
     print(f"[COGNITIVE] Analyzing: {file_path} for numerical table titles...")
 
-    # Usando la nueva API para subir archivos
     sample_file = client.files.upload(file=file_path)
 
     try:
-        # La nueva API permite pasar Pydantic nativamente en la configuración
+        # response = client.chat.completions.create(
+        #     model="gpt-4o",
+        #     messages=[
+        #         {
+        #             "role": "user",
+        #             "content": [
+        #                 {"type": "text", "text": COGNITIVE_PROMPT},
+        #                 {
+        #                     "type": "image_url",
+        #                     "image_url": {
+        #                         "url": f"data:image/png;base64,{base64_image}"
+        #                     }
+        #                 }
+        #             ]
+        #         }
+        #     ],
+        #     temperature=0.7
+        # )
         response = client.models.generate_content(
-            model='gemini-1.5-flash',
+            model='gemini-2.0-flash',
             contents=[sample_file, COGNITIVE_PROMPT],
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -69,15 +84,13 @@ def extract_report_titles_cognitively(file_path: str) -> ExtractedTitles:
             ),
         )
         
-        # Opcional: limpiar el archivo en la nube
         client.files.delete(name=sample_file.name)
         
-        # El SDK ya nos devuelve el JSON estructurado, solo lo pasamos a nuestro modelo
         import json
         return ExtractedTitles(**json.loads(response.text))
 
     except Exception as e:
-        print(f"  --> ❌ Unexpected Error: {e}")
+        print(f"  --> Unexpected Error: {e}")
         return ExtractedTitles(table_titles=[], analysis_justification=f"General error: {str(e)}")
 
 # ==========================================

@@ -4,6 +4,7 @@ from google.genai import types
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -23,7 +24,8 @@ class ExtractedTitles(BaseModel):
 # ==========================================
 # Step 2: Configure the New AI Client
 # ==========================================
-client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+# Create client with API key (can be passed as parameter or from environment)
+# client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 # client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # ==========================================
@@ -48,11 +50,20 @@ Locate all visible structural tables containing rows and columns of *numerical* 
 # ==========================================
 # Step 4: The Execution Function
 # ==========================================
-def extract_report_titles_cognitively(file_path: str) -> ExtractedTitles:
+def extract_report_titles_cognitively(file_path: str, api_key: Optional[str] = None) -> ExtractedTitles:
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File not found: {file_path}")
 
     print(f"[COGNITIVE] Analyzing: {file_path} for numerical table titles...")
+    
+    # Use provided API key or fall back to environment variable
+    if api_key:
+        client = genai.Client(api_key=api_key)
+    else:
+        env_key = os.environ.get("GEMINI_API_KEY")
+        if not env_key:
+            raise ValueError("No API key provided and GEMINI_API_KEY not found in environment")
+        client = genai.Client(api_key=env_key)
 
     sample_file = client.files.upload(file=file_path)
 
@@ -86,7 +97,6 @@ def extract_report_titles_cognitively(file_path: str) -> ExtractedTitles:
         
         client.files.delete(name=sample_file.name)
         
-        import json
         return ExtractedTitles(**json.loads(response.text))
 
     except Exception as e:

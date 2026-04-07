@@ -67,6 +67,20 @@ st.markdown('<div class="main-title">📊 DATAX</div>', unsafe_allow_html=True)
 st.markdown("---")
 
 # ==========================================
+# API Key Configuration (Sidebar)
+# ==========================================
+with st.sidebar:
+    st.header("🔑 API Configuration")
+    api_key = st.text_input(
+        "Enter your Gemini API Key",
+        type="password",
+        help="Your API key is stored only in this session and not saved"
+    )
+    st.markdown("---")
+    if not api_key:
+        st.warning("⚠️ API Key is required to use the analysis features")
+
+# ==========================================
 # File Upload Section
 # ==========================================
 st.header("📁 Upload Document")
@@ -78,7 +92,7 @@ uploaded_file = st.file_uploader(
     help="Upload a document to analyze"
 )
 
-if uploaded_file is not None:
+if uploaded_file is not None and api_key:
     # Save uploaded file to temporary location
     with tempfile.NamedTemporaryFile(delete=False, suffix=Path(uploaded_file.name).suffix) as tmp_file:
         tmp_file.write(uploaded_file.getbuffer())
@@ -134,7 +148,7 @@ if uploaded_file is not None:
             st.subheader("Extracted Table Titles")
             
             with st.spinner("Analyzing document for table titles..."):
-                titles_result = extract_report_titles_cognitively(tmp_file_path)
+                titles_result = extract_report_titles_cognitively(tmp_file_path, api_key=api_key)
             
             if titles_result.table_titles:
                 st.markdown('<div class="success-box">', unsafe_allow_html=True)
@@ -206,6 +220,14 @@ if uploaded_file is not None:
         except:
             pass
 
+elif uploaded_file is not None and not api_key:
+    st.markdown("""
+    <div class="error-box">
+        <b>❌ API Key Required</b><br>
+        Please provide your Gemini API Key in the sidebar to analyze documents.
+    </div>
+    """, unsafe_allow_html=True)
+
 else:
     st.info("👆 Upload a document to begin analysis")
 
@@ -213,7 +235,7 @@ else:
 # Sidebar Information
 # ==========================================
 with st.sidebar:
-    st.header("ℹ️ Agente de IA para la Automatización de Ingesta de Datos")
+    st.header("ℹ️ INFO")
     
     
     st.markdown("---")

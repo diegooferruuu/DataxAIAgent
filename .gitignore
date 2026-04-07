@@ -29,7 +29,7 @@ data/
 *.csv
 *.xlsx
 *.xls
-*.json
+
 
 # =========================
 # Logs del Sistema y Orquestador
